@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionRec · aiguillage planétaire</title>
+    <!-- Inter + Space Grotesk (résultats) + FontAwesome icons (gratuit) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Space+Grotesk:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- header mission earth -->
+        <div class="earth-header" id="earthHeader">
+            <div class="brand">
+                <i class="fas fa-earth-americas"></i>
+                <h1 class="brand-title">VisionRec · mission zéro déchet</h1>
+            </div>
+            <div id="missionPill" class="pill-mission"><i class="fas fa-recycle"></i> trier aujourd'hui, sauver demain
+            </div>
+        </div>
+
+      
+
+        <!-- AUTH VIEW (affichée si non connecté) -->
+        <div id="authView" class="auth-view">
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+                <i class="fas fa-leaf" style="font-size: 2rem; color: #378f60;"></i>
+                <h2 class="auth-title">Connectez‑vous pour agir</h2>
+            </div>
+            <div class="split-auth">
+                <!-- login -->
+                <div class="auth-card">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-sign-in-alt"></i> Connexion</h3>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="vous@exemple.com">
+                    </div>
+                    <div class="field">
+                        <label>Mot de passe</label>
+                        <input type="password" id="loginPassword" placeholder="••••••">
+                    </div>
+                    <button id="loginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Se connecter</button>
+                    <div id="loginFeedback" style="margin-top: 1rem; font-size:0.9rem; color:#af4c4c;"></div>
+                </div>
+                <!-- register -->
+                <div class="auth-card">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-user-plus"></i> Créer un compte</h3>
+                    <div class="field">
+                        <label>Nom</label>
+                        <input type="text" id="registerName" placeholder="visiteur">
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="contact@exemple.com">
+                    </div>
+                    <div class="field">
+                        <label>Mot de passe</label>
+                        <input type="password" id="registerPassword" placeholder="••••••">
+                    </div>
+                    <button id="registerBtn" style="background:#467a6b;"><i class="fas fa-seedling"></i>
+                        S'inscrire</button>
+                    <div id="registerFeedback" style="margin-top: 1rem; font-size:0.9rem; color:#af4c4c;"></div>
+                </div>
+            </div>
+            <div class="token-row">
+                <button class="secondary" id="copyTokenBtn" style="width: auto;"><i class="fas fa-copy"></i> Copier
+                    token</button>
+                <span id="miniToken"
+                    style="background: #dbeae3; border-radius: 60px; padding: 0.5rem 1.2rem; font-size:0.8rem;">aucun
+                    token</span>
+            </div>
+        </div>
+
+        <!-- MAIN VIEW (connecté) : contient les onglets -->
+        <div id="mainView" class="main-view hidden">
+           <!-- navigation contextuelle (visible seulement si connecté) -->
+        <div id="mainNav" >
+            <div class="nav-tabs" id="navTabs">
+                <div class="nav-item active" data-tab="classify"><i class="fas fa-camera"></i> Classifier</div>
+                <div class="nav-item" data-tab="history"><i class="fas fa-clock-rotate-left"></i> Historique</div>
+            </div>
+            <div class="nav-actions">
+                <button id="themeToggle" class="secondary" style="width:auto; padding:0.65rem 1rem;">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="logoutBtn" class="secondary" style="width:auto; padding:0.65rem 1.4rem;"><i
+                        class="fas fa-sign-out-alt"></i> Déconnexion</button>
+                <a href="/api/spec.html#!/spec" target="_blank" class="doc-link"><i
+                        class="fas fa-book-open"></i> Documentation API</a>
+            </div>
+        </div>
+        
+        <!-- onglet classification -->
+            <div id="tabClassify" class="cardmain">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2><i class="fas fa-trash-can" style="color: #3c8d6e;"></i> Classifier un déchet</h2>
+                    <span class="result-badge" id="classifyStatus">Prêt</span>
+                </div>
+                <div class="classify-grid">
+                    <div>
+                        <div class="field">
+                            <label>Choisissez une image</label>
+                            <input type="file" id="wasteFile" accept="image/*">
+                        </div>
+                        <img id="previewImg" class="image-preview" alt="Aperçu" style="display: none;">
+                        <button id="classifyBtn" style="width: auto; padding: 0.9rem 2.5rem;"><i
+                                class="fas fa-cloud-upload-alt"></i> Envoyer & analyser</button>
+                    </div>
+                    <div class="classify-card">
+                        <i class="fas fa-globe" style="font-size: 2rem; color: #42987e;"></i>
+                        <div id="classificationResult" style="font-weight: 500; margin-top: 0.5rem;">En attente
+                            d'analyse...</div>
+                        <div class="planet-stats" id="planetImpact">
+                            <span class="stat-item"><i class="fas fa-recycle"></i> impact 🌱</span>
+                        </div>
+                        <div class="json-card">
+                            <div class="json-title"><i class="fas fa-code"></i> Réponse JSON</div>
+                            <pre id="classifyJson" class="json-pre">(vide)</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- onglet historique -->
+            <div id="tabHistory" class="cardmain hidden">
+                <h2><i class="fas fa-timeline"></i> Votre historique citoyen</h2>
+                <button id="loadHistoryBtn" style="width: auto; margin: 1.2rem 0;"><i class="fas fa-rotate"></i>
+                    Charger</button>
+                <div id="historyContainer" class="history-list">
+                    <div class="history-item"><i class="fas fa-image"></i> Aucune analyse pour l'instant</div>
+                </div>
+                <div class="json-card">
+                    <div class="json-title"><i class="fas fa-code"></i> Réponse JSON</div>
+                    <pre id="historyJson" class="json-pre">(vide)</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST CONTAINER -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <div class="earth-footer">
+            🌍 chaque classification rapproche la planète d'un avenir propre · VisionRec
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // ---------- state ----------
+            const STORAGE_KEY = 'visionrec_token';
+            const THEME_KEY = 'visionrec_theme';
+            let token = localStorage.getItem(STORAGE_KEY) || '';
+            let baseUrl = window.location.origin;   // utilisé pour l'API
+            let theme = localStorage.getItem(THEME_KEY) || 'light';
+
+            // DOM elements
+            const authView = document.getElementById('authView');
+            const earthHeader = document.getElementById('earthHeader');
+            const missionPill = document.getElementById('missionPill');
+            const mainView = document.getElementById('mainView');
+            const mainNav = document.getElementById('mainNav');
+            const navTabs = document.getElementById('navTabs');
+            const tabClassify = document.getElementById('tabClassify');
+            const tabHistory = document.getElementById('tabHistory');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const themeToggle = document.getElementById('themeToggle');
+            const miniToken = document.getElementById('miniToken');
+            const toastContainer = document.getElementById('toastContainer');
+
+            // feedback auth
+            const loginFeedback = document.getElementById('loginFeedback');
+            const registerFeedback = document.getElementById('registerFeedback');
+
+            // inputs
+            const loginEmail = document.getElementById('loginEmail');
+            const loginPassword = document.getElementById('loginPassword');
+            const registerName = document.getElementById('registerName');
+            const registerEmail = document.getElementById('registerEmail');
+            const registerPassword = document.getElementById('registerPassword');
+
+            // classify
+            const wasteFile = document.getElementById('wasteFile');
+            const previewImg = document.getElementById('previewImg');
+            const classifyBtn = document.getElementById('classifyBtn');
+            const classificationResult = document.getElementById('classificationResult');
+            const planetImpact = document.getElementById('planetImpact');
+            const classifyStatus = document.getElementById('classifyStatus');
+            const classifyJson = document.getElementById('classifyJson');
+
+            // history
+            const loadHistoryBtn = document.getElementById('loadHistoryBtn');
+            const historyContainer = document.getElementById('historyContainer');
+            const historyJson = document.getElementById('historyJson');
+
+            // token copy
+            const copyTokenBtn = document.getElementById('copyTokenBtn');
+
+            // helper toast
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-info-circle'}"></i> ${message}`;
+                toastContainer.appendChild(toast);
+                setTimeout(() => toast.remove(), 4000);
+            }
+
+            function prettyJson(data) {
+                try { return JSON.stringify(data ?? {}, null, 2); }
+                catch { return String(data); }
+            }
+
+            function renderJson(target, payload) {
+                if (!target) return;
+                target.textContent = prettyJson(payload);
+            }
+
+            // update UI based on token
+            function refreshUI() {
+                const hasToken = !!token;
+                authView.classList.toggle('hidden', hasToken);
+                mainView.classList.toggle('hidden', !hasToken);
+                missionPill.classList.toggle('hidden', !hasToken);
+                mainNav.style.display = hasToken ? 'flex' : 'none';
+                miniToken.innerText = token ? `bearer ${token.slice(0, 12)}…` : 'aucun token';
+
+                if (!hasToken) {
+                    // cacher earthHeader et prepend son contenu dans authView pour un effet de transition fluide
+                    earthHeader.style.display = 'none';
+                    authView.prepend(earthHeader);
+                } else {
+                    earthHeader.style.display = 'flex';
+                }
+
+            }
+
+            function applyTheme(value) {
+                const isDark = value === 'dark';
+                document.body.classList.toggle('dark', isDark);
+                themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            }
+
+            function setTheme(value) {
+                theme = value;
+                localStorage.setItem(THEME_KEY, theme);
+                applyTheme(theme);
+            }
+
+            // set token and persist
+            function setToken(newToken) {
+                token = newToken || '';
+                if (token) localStorage.setItem(STORAGE_KEY, token);
+                else localStorage.removeItem(STORAGE_KEY);
+                refreshUI();
+            }
+
+            // initial
+            setToken(token);
+            applyTheme(theme);
+
+            // nav tabs
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', e => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    item.classList.add('active');
+                    const tab = item.dataset.tab;
+                    tabClassify.classList.toggle('hidden', tab !== 'classify');
+                    tabHistory.classList.toggle('hidden', tab !== 'history');
+                });
+            });
+
+            // API call helper
+            async function apiCall(path, options = {}) {
+                const url = baseUrl.replace(/\/$/, '') + (path.startsWith('/') ? path : '/' + path);
+                const headers = { ...(options.headers || {}) };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+                try {
+                    const res = await fetch(url, { ...options, headers });
+                    const text = await res.text();
+                    let body;
+                    try { body = text ? JSON.parse(text) : {}; } catch { body = { raw: text }; }
+                    return { ok: res.ok, status: res.status, body };
+                } catch (err) {
+                    return { ok: false, error: err.message };
+                }
+            }
+
+            // preview image
+            wasteFile.addEventListener('change', () => {
+                const file = wasteFile.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => { previewImg.src = e.target.result; previewImg.style.display = 'block'; };
+                    reader.readAsDataURL(file);
+                } else previewImg.style.display = 'none';
+            });
+
+            // LOGIN
+            document.getElementById('loginBtn').addEventListener('click', async () => {
+                const email = loginEmail.value;
+                const pass = loginPassword.value;
+                if (!email || !pass) { showToast('Email et mot de passe requis', 'error'); return; }
+                const res = await apiCall('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: pass })
+                });
+                if (res.ok && res.body.access_token) {
+                    setToken(res.body.access_token);
+                    showToast('Connexion réussie ! 🌿', 'success');
+                    loginFeedback.innerHTML = '';
+                } else {
+                    const msg = res.body?.message || 'Erreur connexion';
+                    loginFeedback.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${msg}`;
+                    showToast(msg, 'error');
+                }
+            });
+
+            // REGISTER
+            document.getElementById('registerBtn').addEventListener('click', async () => {
+                const username = registerName.value;
+                const email = registerEmail.value;
+                const pass = registerPassword.value;
+                if (!username || !email || !pass) { showToast('Tous les champs requis', 'error'); return; }
+                const res = await apiCall('/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password: pass })
+                });
+                if (res.ok && res.body.access_token) {
+                    setToken(res.body.access_token);
+                    showToast('Compte créé ! Bienvenue dans la mission 🌍', 'success');
+                    registerFeedback.innerHTML = '';
+                } else {
+                    const msg = res.body?.message || 'Erreur inscription';
+                    registerFeedback.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${msg}`;
+                    showToast(msg, 'error');
+                }
+            });
+
+            // copy token
+            copyTokenBtn.addEventListener('click', async () => {
+                if (!token) { showToast('Aucun token à copier', 'warning'); return; }
+                await navigator.clipboard.writeText(token);
+                showToast('Token copié !', 'success');
+            });
+
+            // theme toggle
+            themeToggle.addEventListener('click', () => {
+                setTheme(theme === 'dark' ? 'light' : 'dark');
+            });
+
+            // LOGOUT
+            logoutBtn.addEventListener('click', () => {
+                setToken('');
+                classifyJson.textContent = '(vide)';
+                historyJson.textContent = '(vide)';
+                classificationResult.innerHTML = "En attente d'analyse...";
+                historyContainer.innerHTML = '<div class="history-item"><i class="fas fa-image"></i> Aucune analyse pour l\'instant</div>';
+                showToast('Déconnecté', 'info');
+            });
+
+            // CLASSIFY
+            classifyBtn.addEventListener('click', async () => {
+                if (!token) { showToast('Vous devez être connecté', 'error'); return; }
+                const file = wasteFile.files[0];
+                if (!file) { showToast('Sélectionnez une image', 'warning'); return; }
+                const fd = new FormData();
+                fd.append('file', file);
+                classifyStatus.innerText = 'analyse...';
+                const res = await apiCall('/waste/classify', {
+                    method: 'POST',
+                    body: fd
+                });
+                if (res.ok) {
+                    const data = res.body || {};
+                    const category = data.prediction || data.category || data.treatment || 'détecté';
+                    const confidence = data.confidence ? ` (${Math.round(data.confidence)}%)` : '';
+                    classificationResult.innerHTML = `<span style="background:#1a5f4b; color:white; padding:0.3rem 1.2rem; border-radius:60px;">✅ ${category}${confidence}</span>`;
+                    let emoji = '♻️';
+                    const lower = String(category).toLowerCase();
+                    if (lower.includes('plastique')) emoji = '🥤';
+                    else if (lower.includes('carton') || lower.includes('papier')) emoji = '📦';
+                    else if (lower.includes('verre')) emoji = '🍾';
+                    else if (lower.includes('metal')) emoji = '⚙️';
+                    planetImpact.innerHTML = `<span class="stat-item"><i class="fas fa-leaf"></i> catégorie ${emoji}</span>`;
+                    renderJson(classifyJson, data);
+                    showToast('Classification enregistrée !', 'success');
+                } else {
+                    classificationResult.innerHTML = '❌ erreur classification';
+                    renderJson(classifyJson, res.body || res);
+                    showToast('Échec classification', 'error');
+                }
+                classifyStatus.innerText = res.ok ? 'terminé' : 'erreur';
+            });
+
+            // HISTORY
+            loadHistoryBtn.addEventListener('click', async () => {
+                if (!token) return;
+                const res = await apiCall('/waste/history');
+                if (res.ok) {
+                    const payload = res.body || {};
+                    const items = Array.isArray(payload.history) ? payload.history : (Array.isArray(payload) ? payload : []);
+                    if (items.length === 0) historyContainer.innerHTML = '<div class="history-item">🌱 Aucune analyse (classez un déchet !)</div>';
+                    else {
+                        historyContainer.innerHTML = items.map(item => {
+                            const label = item.prediction || item.category || item.filename || 'déchet';
+                            const time = item.timestamp || item.createdAt;
+                            const dateStr = time ? new Date(time).toLocaleString() : '';
+                            return `<div class="history-item"><i class="fas fa-leaf"></i> ${label}${dateStr ? ' – ' + dateStr : ''}</div>`;
+                        }).join('');
+                    }
+                    renderJson(historyJson, payload);
+                    showToast('Historique chargé', 'success');
+                } else {
+                    historyContainer.innerHTML = '<div class="history-item">❌ erreur chargement</div>';
+                    renderJson(historyJson, res.body || res);
+                    showToast('Erreur historique', 'error');
+                }
+            });
+
+            // logout via delete token (ajout d'un bouton deconnexion simple)
+
+
+            // Pré-remplissage /health (ping) optionnel mais on peut laisser
+            // petite amélioration: message si baseUrl différente? on utilise window.origin
+            // tout est pret.
+        })();
+    </script>
+</body>
+
+</html>

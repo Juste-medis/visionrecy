@@ -1,0 +1,22 @@
+# Liste des bibliothèques requises
+Flask==3.1.0
+tensorflow==2.20.0
+opencv-python==4.13.0.92
+numpy==2.4.2
+
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+flask-jwt-extended==4.7.1
+flask-cors== 5.0.0
+pillow == 11.1.0
+flask-restplus==0.13.0
+flask_restful_swagger==0.20
+schema==0.7.7
+Flask-Migrate==4.1.0
+Flask-Mail==0.10.0
+
+torch==2.8.0
+torchvision==0.23.0
+transformers==4.56.1
+accelerate==1.10.1
+python-dotenv==1.1.1

@@ -1,0 +1,27 @@
+# created by virtualenv automatically
+.venv/
+*.pyc
+__pycache__/
+instance/
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.idea/
+*.swp
+*~
+*.db
+.logs/app.log
+.app/static
+.app.db
+app.db
+config.py
+tmp2
+*.h5
+logs/
+config.py
+app/static/uploads/
+tmp/

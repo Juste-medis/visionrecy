@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>500 | Oups, panne serveur</title>
+    <style>
+        :root {
+            --bg: #090d18;
+            --panel: rgba(12, 18, 34, 0.82);
+            --glow1: rgba(251, 191, 36, 0.16);
+            --glow2: rgba(248, 113, 113, 0.14);
+            --text: #f4f6ff;
+            --muted: #b6c2d8;
+            --accent: #fbbf24;
+            --border: rgba(148, 163, 184, 0.24);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 20% 22%, var(--glow1), transparent 36%),
+                radial-gradient(circle at 80% 12%, var(--glow2), transparent 32%),
+                linear-gradient(145deg, #080c16, #0a0f1c 55%, #070b14);
+            color: var(--text);
+            font-family: "Space Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
+            padding: 24px;
+        }
+
+        .card {
+            width: min(960px, 100%);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 28% 36%, rgba(251, 191, 36, 0.12), transparent 42%),
+                radial-gradient(circle at 78% 24%, rgba(248, 113, 113, 0.1), transparent 40%);
+        }
+
+        .pill {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(251, 191, 36, 0.16);
+            color: var(--accent);
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        h1 {
+            margin: 14px 0 6px;
+            font-size: 48px;
+            letter-spacing: -0.01em;
+        }
+
+        p {
+            margin: 0 0 10px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            margin-top: 20px;
+        }
+
+        .tile {
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .tile strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        a.button {
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: linear-gradient(120deg, #fbbf24, #f59e0b);
+            color: #1a0c04;
+            font-weight: 600;
+        }
+
+        a.ghost {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+        }
+
+        .code {
+            font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 14px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <div class="pill">Erreur 500 · Panne serveur</div>
+        <h1>On a rencontre un probleme interne</h1>
+        <p>Un incident cote serveur a bloque la reponse. L equipe est alertee. Vous pouvez reessayer ou nous signaler le
+            contexte.</p>
+
+        <div class="grid">
+            <div class="tile"><strong>Ce que vous pouvez faire</strong>Attendre quelques secondes puis rafraichir la
+                page.</div>
+            <div class="tile"><strong>Support</strong>Envoyez l URL, l action realisee et l horodatage pour faciliter le
+                diagnostic.</div>
+            <div class="tile"><strong>Navigation</strong>Revenir a l accueil ou poursuivre sur une autre section.</div>
+        </div>
+
+        <div class="actions">
+            <a class="button" href="/">Retour a l accueil</a>
+            <a class="button ghost" href="mailto:support@visionrec.local">Contacter le support</a>
+        </div>
+        <div class="code">Erreur 500 · VisionRec</div>
+    </main>
+</body>
+
+</html>
