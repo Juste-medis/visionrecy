@@ -18,6 +18,8 @@ def preprocess_image(file, filename):
     """Traite l'image (chargement, redimensionnement et normalisation)"""
     try:
         # Prétraitement de l'image
+        image_path = os.path.join(
+                current_app.config['UPLOAD_FOLDER']) + filename
         image = cv2.imread(image_path)
         # Redimensionner selon les besoins du modèle
         image = cv2.resize(image, (224, 224))
